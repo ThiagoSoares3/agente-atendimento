@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat do Agente</title>
+</head>
+<body>
+
+<h2>Conversar com o Agente</h2>
+
+<input type="text" id="mensagem" size="50" placeholder="Digite sua pergunta">
+<button onclick="enviar()">Enviar</button>
+
+<p><strong>Resposta:</strong></p>
+<pre id="resposta"></pre>
+
+<script>
+function enviar() {
+    fetch("/chat", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            empresa: "clinica",
+            mensagem: document.getElementById("mensagem").value
+        })
+    })
+    .then(r => r.json())
+    .then(d => {
+        document.getElementById("resposta").innerText = d.resposta;
+    })
+    .catch(err => {
+        document.getElementById("resposta").innerText = "Erro ao conectar";
+    });
+}
+</script>
+
+</body>
+</html>

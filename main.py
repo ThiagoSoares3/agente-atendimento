@@ -1,35 +1,26 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
-import os
-import openai
+from openai import OpenAI
 
 app = Flask(__name__)
-CORS(app)  # <<< ISSO RESOLVE O ERRO DO NAVEGADOR
+CORS(app)
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
+client = OpenAI()
 
 @app.route("/")
 def home():
-    return "Agente multiempresas rodando"
+    return render_template("chat.html")
 
 @app.route("/chat", methods=["POST"])
 def chat():
-    data = request.get_json()
-
-    empresa = data.get("empresa", "geral")
+    data = request.json
     mensagem = data.get("mensagem", "")
 
-    resposta = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
+    resposta = client.chat.completions.create(
+        model="gpt-4o-mini",
         messages=[
-            {
-                "role": "system",
-                "content": f"Você é um agente de atendimento educado e claro da empresa {empresa}."
-            },
-            {
-                "role": "user",
-                "content": mensagem
-            }
+            {"role": "system", "content": "Você é um agente de atendimento educado."},
+            {"role": "user", "content": mensagem}
         ]
     )
 
