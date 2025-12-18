@@ -1,0 +1,8 @@
+{
+  "nome": "Clínica Vida Plena",
+  "mensagens": {
+    "boas_vindas": "Olá 😊 Seja bem-vindo à Clínica Vida Plena! Como posso te ajudar hoje?",
+    "consulta": "Claro! Posso te ajudar a marcar uma consulta. Qual especialidade você procura?",
+    "padrao": "Entendi 🙂 Pode me explicar um pouco melhor como posso te ajudar?"
+  }
+}
