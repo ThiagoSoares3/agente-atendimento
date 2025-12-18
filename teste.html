@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Teste do Agente</title>
+</head>
+<body>
+
+    <h2>Conversar com o Agente</h2>
+
+    <input type="text" id="mensagem" placeholder="Digite sua pergunta" size="50">
+    <button onclick="enviar()">Enviar</button>
+
+    <p><strong>Resposta:</strong></p>
+    <div id="resposta"></div>
+
+    <script>
+        function enviar() {
+            const mensagem = document.getElementById("mensagem").value;
+
+            fetch("https://agente-atendimento-nthq.onrender.com/chat", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    empresa: "clinica",
+                    mensagem: mensagem
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById("resposta").innerText = data.resposta;
+            })
+            .catch(err => {
+                document.getElementById("resposta").innerText = "Erro ao conectar";
+            });
+        }
+    </script>
+
+</body>
+</html>

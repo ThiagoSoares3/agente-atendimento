@@ -1,8 +1,12 @@
 from flask import Flask, request, jsonify
-from openai import OpenAI
-from empresas import EMPRESAS
+from flask_cors import CORS
+import os
+import openai
 
 app = Flask(__name__)
+CORS(app)  # <<< ISSO RESOLVE O ERRO DO NAVEGADOR
+
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 @app.route("/")
 def home():
@@ -10,32 +14,31 @@ def home():
 
 @app.route("/chat", methods=["POST"])
 def chat():
-    data = request.json
+    data = request.get_json()
 
-    empresa_id = data.get("empresa")
+    empresa = data.get("empresa", "geral")
     mensagem = data.get("mensagem", "")
 
-    if empresa_id not in EMPRESAS:
-        return jsonify({"erro": "Empresa não encontrada"}), 404
-
-    empresa = EMPRESAS[empresa_id]
-
-    client = OpenAI(api_key=empresa["api_key"])
-
-    resposta = client.chat.completions.create(
-        model="gpt-4o-mini",
+    resposta = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
         messages=[
-            {"role": "system", "content": empresa["prompt"]},
-            {"role": "user", "content": mensagem}
+            {
+                "role": "system",
+                "content": f"Você é um agente de atendimento educado e claro da empresa {empresa}."
+            },
+            {
+                "role": "user",
+                "content": mensagem
+            }
         ]
     )
 
     return jsonify({
-        "empresa": empresa["nome"],
         "resposta": resposta.choices[0].message.content
     })
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
+
 
 
